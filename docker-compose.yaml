@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  db:
+    image: mariadb:10.2.10
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: xxxxxxxx
+      MYSQL_DATABASE: wpblog
+      MYSQL_USER: wpblog
+      MYSQL_PASSWORD: xxxxxxxx
+    volumes:
+      - ./mysql:/var/lib/mysql  # your sql database files
+
+  wordpress: 
+    depends_on: 
+      - db
+    image: lesca/wordpress:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306 # connect to mysql instance
+      WORDPRESS_DB_NAME: wpblog
+      WORDPRESS_DB_USER: wpblog
+      WORDPRESS_DB_PASSWORD: xxxxxxxx
+    volumes:
+      - ./html:/var/www/html/ # your wordpress html codes
+      - ./conf/certs:/res/certs # your certs and keys used by below conf
+      - ./conf/default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf # replace the default ssl conf
+
